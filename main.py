@@ -56,13 +56,20 @@ def handle_text(message):
     elif message.text == "🔍 Где Рома?":
         bot.send_message(message.chat.id, f"Текущий статус:\nРоман {random.choice(STATUSES)}.")
 
+# Заворачиваем опрос в бесконечный цикл с защитой от падений
 def run_bot():
-    bot.polling(none_stop=True)
+    while True:
+        try:
+            print("Запуск опроса Телеграм-сервера...")
+            bot.polling(none_stop=True, timeout=60, long_polling_timeout=60)
+        except Exception as e:
+            print(f"Фоновый сбой бота: {e}. Перезапуск потока через 5 секунд...")
+            time.sleep(5)
 
 # Запуск бота в фоне
 threading.Thread(target=run_bot, daemon=True).start()
 
-# Веб-заглушка для Render
+# Веб-заглушка для Render (ОСНОВНОЙ ПОТОК)
 class HealthCheckHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -71,4 +78,5 @@ class HealthCheckHandler(BaseHTTPRequestHandler):
 
 port = int(os.environ.get("PORT", 10000))
 server = HTTPServer(("0.0.0.0", port), HealthCheckHandler)
+print(f"Веб-сервер запущен на порту {port}. Бот готов к работе.")
 server.serve_forever()

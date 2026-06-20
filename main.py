@@ -6,7 +6,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import telebot
 from telebot import types
 
-TOKEN = "8629064923:AAELWnldIa0OrOlhBjU6huqdNFw-jo4p7sw"
+TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 bot = telebot.TeleBot(TOKEN)
 
 # =====================================================================
